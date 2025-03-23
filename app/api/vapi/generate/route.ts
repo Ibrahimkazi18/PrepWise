@@ -9,6 +9,7 @@ export async function GET () {
 
 export async function POST (request: Request) {
     console.log("POST request received");
+    console.log("Headers:", Object.fromEntries(request.headers));
     const { type, role, level, techstack, amount, userid } = await request.json();
     console.log("In POST", type, role, level, techstack, amount, userid);
     try{
