@@ -8,9 +8,11 @@ export async function GET () {
 }
 
 export async function POST (request: Request) {
+    console.log("POST request received");
     const { type, role, level, techstack, amount, userid } = await request.json();
-
+    console.log("In POST", type, role, level, techstack, amount, userid);
     try{
+        console.log("Generating text with Google AI");
         const { text: questions } = await generateText({
             model: google('gemini-2.0-flash-001'),
             prompt: `Prepare questions for a job interview.
@@ -27,6 +29,7 @@ export async function POST (request: Request) {
                     Thank you! <3
                 `,
         });
+        console.log("Generated questions:", questions);
 
         const interview = {
             role, 
@@ -40,8 +43,11 @@ export async function POST (request: Request) {
             coverImage: getRandomInterviewCover(),
             createdAt: new Date().toISOString()
         }
+        console.log("Interview data:", interview);
 
+        console.log("Writing to Firestore");
         await db.collection('interviews').add(interview);
+        console.log("Write successful");
 
         return Response.json({ success: true }, { status: 200 })
 
