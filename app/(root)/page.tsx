@@ -1,11 +1,21 @@
 import InterviewCard from '@/components/InterviewCard'
 import { Button } from '@/components/ui/button'
 import { dummyInteviews } from '@/constants'
+import { getCurrentUser, getInterviewByUserId, getLatestInterviews } from '@/lib/actions/auth.action'
 import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
 
-const page = () => {
+const page = async () => {
+  const user = await getCurrentUser();
+  const [userInterviews, latestInterviews] = await Promise.all([
+    await getInterviewByUserId(user?.id!),
+    await getLatestInterviews({ userId: user?.id! })
+  ])
+
+  const hasPastInterviews = userInterviews?.length! > 0;
+  const hasUpcomingInterviews = latestInterviews?.length! > 0;
+
   return (
     <>
       <section className='card-cta'>
@@ -26,11 +36,11 @@ const page = () => {
         <h2>Your Interviews</h2>
 
         <div className='interviews-section'>
-          {dummyInteviews.map((ineterview, index) => (
+          {hasPastInterviews ? userInterviews?.map((ineterview, index) => (
             <InterviewCard {...ineterview} key={index} />
-          ) )}
-
-          {/* <p>You haven't taken any interviews yet</p> */}
+          )) : (
+            <p>You haven't taken any interviews yet</p>
+          ) } 
         </div>
       </section>
 
@@ -38,11 +48,11 @@ const page = () => {
         <h2>Take an Interview</h2>
 
         <div className='interviews-section'>
-          {dummyInteviews.map((ineterview, index) => (
+          {hasUpcomingInterviews ? latestInterviews?.map((ineterview, index) => (
             <InterviewCard {...ineterview} key={index} />
-          ) )}
-
-          {/* <p>There are no interviews yet</p> */}
+          )) : (
+            <p>There are no interviews yet</p>  
+          )}
         </div>
       </section>
     </>
