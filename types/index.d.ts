@@ -1,6 +1,7 @@
 interface Feedback {
     id: string;
     interviewId: string;
+    userId: string;
     totalScore: number;
     categoryScores: Array<{
       name: string;
@@ -65,6 +66,11 @@ interface Feedback {
   
   interface GetFeedbackByInterviewIdParams {
     interviewId: string;
+    userId: string;
+  }
+
+  interface GetFeedbackByIdParams {
+    feedbackId: string;
     userId: string;
   }
   

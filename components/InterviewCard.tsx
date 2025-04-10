@@ -4,9 +4,11 @@ import { Button } from './ui/button';
 import Link from 'next/link';
 import { getRandomInterviewCover } from '@/lib/utils';
 import DisplayTechIcons from './DisplayTechIcons';
+import { getFeedbackByInterviewid } from '@/lib/actions/general.action';
 
-const InterviewCard = ({ id, userId, coverImage, role, type, techstack, createdAt} : InterviewCardProps) => {
-  const feedback = null as Feedback | null;
+const InterviewCard = async ({ id, userId, coverImage, role, type, techstack, createdAt} : InterviewCardProps) => {
+  const allFeedback = userId && id  ? await getFeedbackByInterviewid({ interviewId: id, userId }) : null;
+  const feedback = allFeedback?.[0] || null;
   const normalizedType = /mix/gi.test(type) ? 'Mixed' : type;
   const formattedDate = dayjs(feedback?.createdAt || createdAt || Date.now()).format('MMM D, YYYY');
 
